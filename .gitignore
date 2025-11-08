@@ -41,3 +41,12 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Macaua Game - React Native
+macaua-game/node_modules/
+macaua-game/android/.gradle
+macaua-game/android/app/build
+macaua-game/android/build
+macaua-game/.gradle
+macaua-game/npm-debug.log
+macaua-game/yarn-error.log

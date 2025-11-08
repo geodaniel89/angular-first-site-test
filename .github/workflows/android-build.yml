@@ -1,0 +1,58 @@
+name: Android Build
+
+on:
+  push:
+    branches:
+      - 'claude/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: macaua-game
+        run: npm install
+
+      - name: Make gradlew executable
+        working-directory: macaua-game/android
+        run: chmod +x gradlew
+
+      - name: Build APK
+        working-directory: macaua-game/android
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: macaua-game-release
+          path: macaua-game/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Create Release Info
+        run: |
+          echo "🎮 Macaua Kids Game APK" > release-info.txt
+          echo "Build Date: $(date)" >> release-info.txt
+          echo "Branch: ${{ github.ref_name }}" >> release-info.txt
+          echo "Commit: ${{ github.sha }}" >> release-info.txt
+
+      - name: Upload Release Info
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-info
+          path: release-info.txt

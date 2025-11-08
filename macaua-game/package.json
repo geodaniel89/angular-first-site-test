@@ -1,0 +1,33 @@
+{
+  "name": "MacauaGame",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "start": "react-native start",
+    "build:android": "cd android && ./gradlew assembleRelease",
+    "build:android:bundle": "cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-native": "0.76.3",
+    "react-native-reanimated": "^3.16.4",
+    "react-native-gesture-handler": "^2.21.2",
+    "react-native-sound": "^0.11.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/runtime": "^7.26.0",
+    "@react-native/babel-preset": "0.76.3",
+    "@react-native/metro-config": "0.76.3",
+    "@react-native/typescript-config": "0.76.3",
+    "@types/react": "^18.3.12",
+    "@types/react-native": "^0.73.0",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
