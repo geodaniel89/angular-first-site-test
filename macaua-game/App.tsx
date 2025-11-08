@@ -52,39 +52,40 @@ const App = () => {
   const playAITurn = () => {
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
 
-    // Handle 8 (skip turn)
-    if (gameState.eightActive) {
+    // Handle 4 (skip turn)
+    if (gameState.fourActive) {
       setMessage('Calculatorul stă! 😴');
       setGameState(prev => ({
         ...prev,
         currentPlayer: 'player',
-        eightActive: false,
+        fourActive: false,
       }));
       return;
     }
 
-    // Handle 7 (draw cards)
-    if (gameState.sevenCounter > 0) {
-      const aiCanPlay7 = gameState.aiHand.some(c => c.rank === '7');
+    // Handle 2/3 (draw cards)
+    if (gameState.drawCounter > 0) {
+      const aiCanPlay23 = gameState.aiHand.some(c => c.rank === '2' || c.rank === '3');
 
-      if (aiCanPlay7 && Math.random() < 0.7) {
-        // AI plays a 7
-        const seven = gameState.aiHand.find(c => c.rank === '7')!;
-        const newAiHand = gameState.aiHand.filter(c => c.id !== seven.id);
-        const newDiscardPile = [...gameState.discardPile, seven];
+      if (aiCanPlay23 && Math.random() < 0.7) {
+        // AI plays a 2 or 3
+        const card23 = gameState.aiHand.find(c => c.rank === '2' || c.rank === '3')!;
+        const newAiHand = gameState.aiHand.filter(c => c.id !== card23.id);
+        const newDiscardPile = [...gameState.discardPile, card23];
+        const cardsToAdd = card23.rank === '2' ? 2 : 3;
 
-        setMessage('Calculatorul pune un 7! +2 cărți pentru tine! 😮');
+        setMessage(`Calculatorul pune un ${card23.rank}! +${cardsToAdd} cărți pentru tine! 😮`);
         setGameState(prev => ({
           ...prev,
           aiHand: newAiHand,
           discardPile: newDiscardPile,
-          sevenCounter: prev.sevenCounter + 1,
+          drawCounter: prev.drawCounter + cardsToAdd,
           currentPlayer: 'player',
         }));
         return;
       } else {
         // AI draws cards
-        const cardsToDraw = gameState.sevenCounter * 2;
+        const cardsToDraw = gameState.drawCounter;
         const { drawn, remaining } = drawCards(gameState.deck, cardsToDraw);
 
         setMessage(`Calculatorul trage ${cardsToDraw} cărți! 📇`);
@@ -92,7 +93,7 @@ const App = () => {
           ...prev,
           aiHand: [...prev.aiHand, ...drawn],
           deck: remaining,
-          sevenCounter: 0,
+          drawCounter: 0,
           currentPlayer: 'player',
         }));
         return;
@@ -148,16 +149,24 @@ const App = () => {
       newState.aiHand = newHand;
     }
 
-    // Handle special cards
-    if (card.rank === '7') {
-      newState.sevenCounter = (gameState.sevenCounter || 0) + 1;
+    // Handle special cards - Romanian rules
+    if (card.rank === '2') {
+      // 2 = draw 2 cards (or stack)
+      newState.drawCounter = (gameState.drawCounter || 0) + 2;
       newState.currentPlayer = player === 'player' ? 'ai' : 'player';
-      setMessage(player === 'player' ? 'Ai pus un 7! 😈' : 'Calculatorul pune un 7! 😮');
-    } else if (card.rank === '8') {
-      newState.eightActive = true;
+      setMessage(player === 'player' ? 'Ai pus un 2! +2 cărți! 😈' : 'Calculatorul pune un 2! 😮');
+    } else if (card.rank === '3') {
+      // 3 = draw 3 cards (or stack)
+      newState.drawCounter = (gameState.drawCounter || 0) + 3;
       newState.currentPlayer = player === 'player' ? 'ai' : 'player';
-      setMessage(player === 'player' ? 'Ai pus un 8! Calculatorul stă! 😊' : 'Calculatorul pune un 8! Tu stai! 😴');
+      setMessage(player === 'player' ? 'Ai pus un 3! +3 cărți! 😈' : 'Calculatorul pune un 3! 😮');
+    } else if (card.rank === '4') {
+      // 4 = skip turn
+      newState.fourActive = true;
+      newState.currentPlayer = player === 'player' ? 'ai' : 'player';
+      setMessage(player === 'player' ? 'Ai pus un 4! Calculatorul stă! 😊' : 'Calculatorul pune un 4! Tu stai! 😴');
     } else if (card.rank === 'A') {
+      // Ace = change color
       if (player === 'ai' && chosenSuit) {
         setMessage(`Calculatorul schimbă culoarea! ${chosenSuit}`);
       } else if (player === 'player') {
@@ -165,6 +174,7 @@ const App = () => {
       }
       newState.currentPlayer = player === 'player' ? 'ai' : 'player';
     } else {
+      // Normal card
       newState.currentPlayer = player === 'player' ? 'ai' : 'player';
       setMessage(player === 'player' ? 'Carte pusă! ✅' : 'Calculatorul pune o carte! 🤖');
     }
@@ -191,23 +201,23 @@ const App = () => {
 
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
 
-    // Handle 8 (skip turn)
-    if (gameState.eightActive) {
+    // Handle 4 (skip turn)
+    if (gameState.fourActive) {
       setMessage('Trebuie să stai! 😴');
       setGameState(prev => ({
         ...prev,
         currentPlayer: 'ai',
-        eightActive: false,
+        fourActive: false,
       }));
       return;
     }
 
-    // Handle 7 (must play 7 or draw)
-    if (gameState.sevenCounter > 0) {
-      if (card.rank === '7') {
+    // Handle 2/3 (must play 2/3 or draw)
+    if (gameState.drawCounter > 0) {
+      if (card.rank === '2' || card.rank === '3') {
         playCard(card, 'player');
       } else {
-        setMessage('Trebuie să pui un 7 sau să tragi cărți! 🃏');
+        setMessage('Trebuie să pui un 2 sau 3 sau să tragi cărți! 🃏');
       }
       return;
     }
@@ -230,9 +240,9 @@ const App = () => {
   const handleDrawCard = () => {
     if (gameState.currentPlayer !== 'player' || gameState.gameOver) return;
 
-    if (gameState.sevenCounter > 0) {
-      // Draw cards for 7s
-      const cardsToDraw = gameState.sevenCounter * 2;
+    if (gameState.drawCounter > 0) {
+      // Draw cards for 2s/3s
+      const cardsToDraw = gameState.drawCounter;
       const { drawn, remaining } = drawCards(gameState.deck, cardsToDraw);
 
       setMessage(`Ai tras ${cardsToDraw} cărți! 📚`);
@@ -240,7 +250,7 @@ const App = () => {
         ...prev,
         playerHand: [...prev.playerHand, ...drawn],
         deck: remaining,
-        sevenCounter: 0,
+        drawCounter: 0,
         currentPlayer: 'ai',
       }));
     } else if (gameState.deck.length > 0) {
@@ -282,6 +292,9 @@ const App = () => {
       <View style={styles.header}>
         <Text style={styles.title}>🎮 Macaua Kids 🎮</Text>
         <Text style={styles.message}>{message}</Text>
+        {gameState.drawCounter > 0 && (
+          <Text style={styles.counterBadge}>📚 +{gameState.drawCounter} cărți!</Text>
+        )}
       </View>
 
       {/* AI Hand (face down) */}
@@ -406,6 +419,16 @@ const styles = StyleSheet.create({
     color: '#FFE66D',
     marginTop: 10,
     fontWeight: '600',
+  },
+  counterBadge: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 15,
+    marginTop: 10,
   },
   aiHandContainer: {
     padding: 20,

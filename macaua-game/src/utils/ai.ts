@@ -13,12 +13,12 @@ export const getAIMove = (state: GameState): { card: Card | null; chosenSuit?: S
   let selectedCard: Card;
 
   // 1. Prioritize special cards (60% chance)
-  const specialCards = playableCards.filter(c => ['7', '8', 'A'].includes(c.rank));
+  const specialCards = playableCards.filter(c => ['2', '3', '4', 'A'].includes(c.rank));
   if (specialCards.length > 0 && Math.random() < 0.6) {
-    // Prefer 7s when AI has many cards
-    const sevens = specialCards.filter(c => c.rank === '7');
-    if (sevens.length > 0 && state.aiHand.length > 5) {
-      selectedCard = sevens[Math.floor(Math.random() * sevens.length)];
+    // Prefer 2s and 3s when AI has many cards (to make opponent draw)
+    const drawCards = specialCards.filter(c => c.rank === '2' || c.rank === '3');
+    if (drawCards.length > 0 && state.aiHand.length > 5) {
+      selectedCard = drawCards[Math.floor(Math.random() * drawCards.length)];
     } else {
       selectedCard = specialCards[Math.floor(Math.random() * specialCards.length)];
     }

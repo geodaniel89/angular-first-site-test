@@ -41,7 +41,7 @@ export const initializeGame = (deck: Card[]): GameState => {
 
   // First card on discard pile (not special)
   let firstCardIndex = 0;
-  while (['7', '8', 'A'].includes(remaining[firstCardIndex].rank)) {
+  while (['2', '3', '4', 'A'].includes(remaining[firstCardIndex].rank)) {
     firstCardIndex++;
   }
 
@@ -57,8 +57,8 @@ export const initializeGame = (deck: Card[]): GameState => {
     deck: deckRemaining,
     discardPile,
     currentPlayer: 'player',
-    sevenCounter: 0,
-    eightActive: false,
+    drawCounter: 0,
+    fourActive: false,
     gameOver: false,
     winner: null,
     chosenSuit: null,

@@ -13,8 +13,8 @@ export interface GameState {
   deck: Card[];
   discardPile: Card[];
   currentPlayer: 'player' | 'ai';
-  sevenCounter: number; // Counts stacked 7s
-  eightActive: boolean; // If 8 was played
+  drawCounter: number; // Counts total cards to draw from stacked 2s and 3s
+  fourActive: boolean; // If 4 was played (skip turn)
   gameOver: boolean;
   winner: 'player' | 'ai' | null;
   chosenSuit: Suit | null; // For Ace card

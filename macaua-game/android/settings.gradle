@@ -1,6 +1,2 @@
 rootProject.name = 'MacauaGame'
-apply from: new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), "../scripts/react_native_pods_utils/script_phases.gradle")
-includeBuild(new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).parent)
-
 include ':app'
-includeBuild(new File(["node", "--print", "require.resolve('@react-native/gradle-plugin/package.json')"].execute(null, rootDir).text.trim()).parent)
